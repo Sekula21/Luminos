@@ -20,7 +20,13 @@ export type Photo = {
 
 export type EditableMember = {
     displayName: string;
-    desctiption?: string;
+    description?: string;
     city: string;
     country: string;
+}
+
+export class MemberParams{
+    DisplayName?: string;
+    pageNumber = 1;
+    pageSize = 10;
 }

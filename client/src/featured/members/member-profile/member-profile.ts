@@ -5,10 +5,11 @@ import { MemberService } from '../../../core/services/member-service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast-service';
 import { AccountService } from '../../../core/services/account-service';
+import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
 
 @Component({
   selector: 'app-member-profile',
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, TimeAgoPipe],
   templateUrl: './member-profile.html',
   styleUrl: './member-profile.css'
 })
@@ -24,7 +25,7 @@ export class MemberProfile implements OnInit, OnDestroy{
   protected memberService = inject(MemberService);
   protected editableMember: EditableMember = {
     displayName: '',
-    desctiption: '',
+    description: '',
     city: '',
     country: ''
   }
@@ -32,7 +33,7 @@ export class MemberProfile implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.editableMember = {
       displayName: this.memberService.member()?.displayName || '',
-      desctiption: this.memberService.member()?.description || '',
+      description: this.memberService.member()?.description || '',
       city: this.memberService.member()?.city || '',
       country: this.memberService.member()?.country || '',
     }

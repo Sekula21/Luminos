@@ -6,7 +6,7 @@
         </div>
         <div class="flex gap-3">
             <span class="font-semibold">Last active:</span>
-            <span>{{member.lastActive | date: 'dd MMM yyyy h:mm a'}}</span>
+            <span>{{member.lastActive | timeAgo}}</span>
         </div>
         <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}</h3>
         @if(memberService.editMode()){
@@ -17,7 +17,7 @@
                 </label>
                 <label class="floating-label">
                     <span>Description</span>
-                    <textarea class="textarea w-full" name="description" [(ngModel)]="editableMember.desctiption" placeholder="Description"> </textarea>
+                    <textarea class="textarea w-full" name="description" [(ngModel)]="editableMember.description" placeholder="Description"> </textarea>
                 </label>
                 <label class="floating-label">
                     <span>City</span>
