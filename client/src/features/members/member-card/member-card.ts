@@ -1,14 +1,30 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, Inject, input } from '@angular/core';
 import { Member } from '../../../types/member';
 import { RouterLink } from '@angular/router';
-import { AgePipe } from '../../../core/pipes/age-pipe';
+import { FollowsService } from '../../../core/services/follows-service';
 
 @Component({
   selector: 'app-member-card',
-  imports: [RouterLink, AgePipe],
+  imports: [RouterLink],
   templateUrl: './member-card.html',
   styleUrl: './member-card.css'
 })
 export class MemberCard {
+  private followService = inject(FollowsService);
   member = input.required<Member>();
+
+  protected hasFollowed = computed(() => this.followService.followIds().includes(this.member().id));
+
+  toggleFollow(event: Event){
+    event.stopPropagation();
+    this.followService.toggleFollow(this.member().id).subscribe({
+      next: () => {
+        if(this.hasFollowed()){
+          this.followService.followIds.update(ids => ids.filter(x => x !== this.member().id));
+        }else{
+          this.followService.followIds.update(ids => [...ids, this.member().id]);
+        }
+      }
+    })
+  }
 }

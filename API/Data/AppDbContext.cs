@@ -11,10 +11,26 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
+    public DbSet<MemberFollow> Follows { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<MemberFollow>()
+            .HasKey(x => new { x.SourceMemberId, x.TargetMemberId });
+
+        modelBuilder.Entity<MemberFollow>()
+            .HasOne(s => s.SourceMember)
+            .WithMany(t => t.FollowedMembers)
+            .HasForeignKey(s => s.SourceMemberId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MemberFollow>()
+            .HasOne(s => s.TargetMember)
+            .WithMany(t => t.FollowedByMember)
+            .HasForeignKey(s => s.TargetMemberId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),

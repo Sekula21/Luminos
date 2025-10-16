@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis;
 
 namespace API.Entities;
 
@@ -19,6 +20,11 @@ public class Member
     //navigation property
     [JsonIgnore]
     public List<Photo> Photos { get; set; } = [];
+
+    [JsonIgnore]
+    public List<MemberFollow> FollowedByMember { get; set; } = [];
+    [JsonIgnore]
+    public List<MemberFollow> FollowedMembers { get; set; } = [];
     
     [JsonIgnore]
     [ForeignKey(nameof(Id))]
