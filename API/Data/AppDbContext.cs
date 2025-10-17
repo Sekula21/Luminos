@@ -1,14 +1,17 @@
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Options;
+using SQLitePCL;
 
 namespace API.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext(
+    DbContextOptions options
+) : IdentityDbContext<User>(options)
 {
-    public AppDbContext(DbContextOptions options) : base(options) { }
-
-    public DbSet<User> Users { get; set; }
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberFollow> Follows { get; set; }
@@ -17,6 +20,13 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<IdentityRole>()
+            .HasData(
+                new IdentityRole { Id = "member-id", Name = "Name", NormalizedName = "MEMBER" },
+                new IdentityRole { Id = "moderator-id", Name = "Moderator", NormalizedName = "MODERATOR" },
+                new IdentityRole { Id = "admin-id", Name = "Admin", NormalizedName = "ADMIN" }
+            );
 
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Recipient)
