@@ -25,6 +25,11 @@ public class Member
     public List<MemberFollow> FollowedByMember { get; set; } = [];
     [JsonIgnore]
     public List<MemberFollow> FollowedMembers { get; set; } = [];
+
+    [JsonIgnore]
+    public List<Message> MessagesSent { get; set; } = [];
+    [JsonIgnore]
+    public List<Message> MessagesRecieved { get; set; } = [];
     
     [JsonIgnore]
     [ForeignKey(nameof(Id))]
