@@ -4,6 +4,8 @@ import { LoginCreds, RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { FollowsService } from './follows-service';
+import { PresenceService } from './presence-service';
+import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +15,7 @@ export class AccountService {
   private followsService = inject(FollowsService);
   currentUser = signal<User | null>(null);
   private baseUrl = environment.apiUrl;
+  private presenceService = inject(PresenceService);
 
   register(creds: RegisterCreds){
     return this.http.post<User>(this.baseUrl + 'account/register', creds, {withCredentials: true}).pipe(
@@ -57,11 +60,15 @@ export class AccountService {
     user.roles = this.getRolesFromToken(user)
     this.currentUser.set(user)
     this.followsService.getFollowIds();
+    if(this.presenceService.hubConnection?.state !== HubConnectionState.Connected){
+      this.presenceService.createHubConnection(user)
+    }
   }
 
   logout(){
     this.followsService.clearFollowIds();
     this.currentUser.set(null);
+    this.presenceService.stopHubConnection();
   }
 
   private getRolesFromToken(user: User): string[]{

@@ -32,7 +32,7 @@
                 </div>
             </form>
         }@else {
-            <div>{{member.description}}</div>
+            <div>{{member.description || 'This user doesnt have description'}}</div>
         }
     </div>
 }
