@@ -19,14 +19,6 @@ export class MemberCard {
 
   toggleFollow(event: Event){
     event.stopPropagation();
-    this.followService.toggleFollow(this.member().id).subscribe({
-      next: () => {
-        if(this.hasFollowed()){
-          this.followService.followIds.update(ids => ids.filter(x => x !== this.member().id));
-        }else{
-          this.followService.followIds.update(ids => [...ids, this.member().id]);
-        }
-      }
-    })
+    this.followService.toggleFollow(this.member().id)
   }
 }

@@ -66,9 +66,13 @@ export class AccountService {
   }
 
   logout(){
-    this.followsService.clearFollowIds();
-    this.currentUser.set(null);
-    this.presenceService.stopHubConnection();
+    this.http.post(this.baseUrl + 'account/logout', {}, {withCredentials: true}).subscribe({
+      next: () => {
+        this.followsService.clearFollowIds();
+        this.currentUser.set(null);
+        this.presenceService.stopHubConnection();
+      }
+    })
   }
 
   private getRolesFromToken(user: User): string[]{

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../../core/services/account-service';
 import { Router, RouterLink } from "@angular/router";
@@ -19,8 +19,10 @@ export class Nav {
   private router = inject(Router)
   private toast = inject(ToastService)
   protected creds: any = {}
+  protected loading = signal(false);
 
   login(){
+    this.loading.set(true);
     this.accountService.login(this.creds).subscribe({
       next: () => {
         this.router.navigateByUrl('/users');
@@ -29,11 +31,17 @@ export class Nav {
       },
       error: error => {
         this.toast.error(error.error)
-      }
+      },
+      complete: () => this.loading.set(false)
     })
   }
   logout(){
     this.accountService.logout();
     this.router.navigateByUrl('/');
+  }
+
+  handleSelectUserItem(){
+    const elem = document.activeElement as HTMLDivElement;
+    if(elem) elem.blur();
   }
 }

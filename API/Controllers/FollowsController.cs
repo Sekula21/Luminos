@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 public class FollowsController(
-    IFollowsRepository followsRepository
+    IUnitOfWork uOW
 ) : BaseApiController
 {
     [HttpPost("{targetMemberId}")]
@@ -18,7 +18,7 @@ public class FollowsController(
 
         if (sourceMemberId == targetMemberId) return BadRequest("You cannot follow yourself");
 
-        var existingFollow = await followsRepository.GetMemberFollow(sourceMemberId, targetMemberId);
+        var existingFollow = await uOW.FollowsRepository.GetMemberFollow(sourceMemberId, targetMemberId);
 
         if (existingFollow == null)
         {
@@ -27,27 +27,27 @@ public class FollowsController(
                 SourceMemberId = sourceMemberId,
                 TargetMemberId = targetMemberId
             };
-            followsRepository.AddFollow(follow);
+            uOW.FollowsRepository.AddFollow(follow);
         }
         else
         {
-            followsRepository.DeleteFollow(existingFollow);
+            uOW.FollowsRepository.DeleteFollow(existingFollow);
         }
 
-        if (await followsRepository.SaveAllChanges()) return Ok();
+        if (await uOW.Complete()) return Ok();
         return BadRequest("Failed to update follow");
     }
 
     [HttpGet("list")]
     public async Task<ActionResult<IEnumerable<string>>> GetCurrentMemberFollowIds()
     {
-        return Ok(await followsRepository.GetCurrentMemberFollowIds(User.GetMemberId()));
+        return Ok(await uOW.FollowsRepository.GetCurrentMemberFollowIds(User.GetMemberId()));
     }
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<Member>>> GetMemberFollows(string predicate)
     {
-        var members = await followsRepository.GetMemberFollows(predicate, User.GetMemberId());
+        var members = await uOW.FollowsRepository.GetMemberFollows(predicate, User.GetMemberId());
         return Ok(members);
     }
 }

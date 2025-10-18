@@ -10,5 +10,4 @@ public interface IFollowsRepository
     Task<IReadOnlyList<string>> GetCurrentMemberFollowIds(string memberId);
     void DeleteFollow(MemberFollow follow);
     void AddFollow(MemberFollow follow);
-    Task<bool> SaveAllChanges();
 }

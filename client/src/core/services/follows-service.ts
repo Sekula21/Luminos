@@ -12,7 +12,15 @@ export class FollowsService {
   followIds = signal<string[]>([]);
 
   toggleFollow(targetMemberId: string){
-    return this.http.post(`${this.baseUrl}follows/${targetMemberId}`, {});
+    return this.http.post(`${this.baseUrl}follows/${targetMemberId}`, {}).subscribe({
+      next: () => {
+        if(this.followIds().includes(targetMemberId)){
+          this.followIds.update(ids => ids.filter(x => x !== targetMemberId));
+        }else{
+          this.followIds.update(ids => [...ids, targetMemberId]);
+        }
+      }
+    })
   }
 
   getFollows(predicate: string){
